@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>記録</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header>
+      <h1>記録</h1>
+      <p>タップでカンタン記録</p>
+    </header>
+
+    <section class="record-panel">
+      <button id="recordButton" class="record-button">🌱 記録</button>
+      <div id="statusMessage" class="status">まだ記録がありません。</div>
+    </section>
+
+    <section class="calendar-panel">
+      <h2>カレンダー</h2>
+      <div id="calendar" class="calendar"></div>
+      <div id="dayDetails" class="day-details">日付をタップしてその日の記録を確認できます。</div>
+    </section>
+
+    <section class="history-panel">
+      <h2>最近の記録</h2>
+      <ul id="historyList" class="history-list"></ul>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
