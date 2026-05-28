@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7d61ff"/>
+      <stop offset="100%" stop-color="#b287ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="url(#grad)"/>
+  <path d="M160 176c0-26.5 21.5-48 48-48h96c26.5 0 48 21.5 48 48v160c0 26.5-21.5 48-48 48H208c-26.5 0-48-21.5-48-48V176z" fill="#fff" opacity="0.15"/>
+  <path d="M256 144c-48.5 0-88 39.5-88 88v88c0 48.5 39.5 88 88 88s88-39.5 88-88v-88c0-48.5-39.5-88-88-88zm0 32c30.9 0 56 25.1 56 56v88c0 30.9-25.1 56-56 56s-56-25.1-56-56v-88c0-30.9 25.1-56 56-56z" fill="#fff"/>
+  <text x="256" y="310" text-anchor="middle" font-family="Segoe UI Emoji, sans-serif" font-size="140" fill="#fff">⚪</text>
+</svg>
