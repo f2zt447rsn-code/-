@@ -109,12 +109,7 @@ p {
 }
 
 .calendar-day.today::after {
-  content: "本日";
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  font-size: 0.65rem;
-  color: #7d61ff;
+  content: "";
 }
 
 .history-list {
