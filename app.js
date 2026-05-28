@@ -32,7 +32,10 @@ function formatTime(date) {
 
 function getTodayKey() {
   const today = new Date();
-  return today.toISOString().slice(0, 10);
+  const y = today.getFullYear();
+  const m = String(today.getMonth() + 1).padStart(2, "0");
+  const d = String(today.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
 }
 
 function buildCalendar(records) {
