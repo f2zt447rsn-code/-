@@ -109,7 +109,7 @@ p {
 }
 
 .calendar-day.today::after {
-  content: "";
+  display: none;
 }
 
 .history-list {
