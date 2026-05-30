@@ -75,12 +75,14 @@ p {
 
 .record-actions {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 14px;
 }
 
 .record-button {
   width: 100%;
+  max-width: none;
   border: none;
   border-radius: 16px;
   background: #7d61ff;
@@ -222,7 +224,7 @@ p {
 }
 
 .calendar-day.toilet-marked {
-  background: #f3e8ff;
+  background: #F0D3FF;
   color: #1f1b14;
   border-color: #d8c5ff;
   box-shadow: inset 0 0 0 1px rgba(115, 64, 255, 0.15);
