@@ -199,13 +199,14 @@ p {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   border-radius: 16px;
   border: 1px solid #e3dcdf;
   background: #fcfbf9;
   font-size: 0.95rem;
   color: #444;
   position: relative;
+  padding-bottom: 16px;
 }
 
 .calendar-day.clickable {
@@ -224,6 +225,7 @@ p {
   background: #f3e8ff;
   color: #1f1b14;
   border-color: #d8c5ff;
+  box-shadow: inset 0 0 0 1px rgba(115, 64, 255, 0.15);
 }
 
 .calendar-day.today {
@@ -237,9 +239,9 @@ p {
 
 .severity-dot {
   position: absolute;
-  bottom: 8px;
-  width: 8px;
-  height: 8px;
+  bottom: 6px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   pointer-events: none;
 }
