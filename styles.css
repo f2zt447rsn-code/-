@@ -224,7 +224,7 @@ p {
 }
 
 .calendar-day.toilet-marked {
-  background: #F0D3FF;
+  background: #E2E1FF;
   color: #1f1b14;
   border-color: #d8c5ff;
   box-shadow: inset 0 0 0 1px rgba(115, 64, 255, 0.15);
