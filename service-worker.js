@@ -9,6 +9,7 @@ const FILES_TO_CACHE = [
 ];
 
 self.addEventListener('install', (event) => {
+  console.log('[SW] install', CACHE_NAME);
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(FILES_TO_CACHE))
   );
@@ -16,6 +17,7 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
+  console.log('[SW] activate', CACHE_NAME);
   event.waitUntil(
     caches.keys().then((cacheNames) =>
       Promise.all(
@@ -32,6 +34,7 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('message', (event) => {
+  console.log('[SW] message', event.data);
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }

@@ -288,12 +288,16 @@ if ('serviceWorker' in navigator) {
         const newWorker = registration.installing;
         if (newWorker) {
           newWorker.addEventListener('statechange', () => {
+            console.log('Service Worker state:', newWorker.state);
             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
               newWorker.postMessage({ type: 'SKIP_WAITING' });
             }
           });
         }
       });
+
+      await registration.update();
+      console.log('Service Worker update check completed.');
     } catch (error) {
       console.warn('Service Worker registration failed:', error);
     }
