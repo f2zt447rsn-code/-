@@ -30,8 +30,35 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
+function networkFirst(request) {
+  return caches.open(CACHE_NAME).then((cache) =>
+    fetch(request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+          cache.put(request, networkResponse.clone());
+        }
+        return networkResponse;
+      })
+      .catch(() => cache.match(request))
+  );
+}
+
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') {
+    return;
+  }
+
+  const requestUrl = new URL(event.request.url);
+  const isAppShell = requestUrl.pathname === '/' || requestUrl.pathname.endsWith('/index.html') || requestUrl.pathname.endsWith('/app.js') || requestUrl.pathname.endsWith('/styles.css');
+
+  if (isAppShell) {
+    event.respondWith(networkFirst(event.request));
     return;
   }
 
