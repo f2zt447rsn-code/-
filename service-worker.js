@@ -1,9 +1,10 @@
-const CACHE_NAME = 'toilet-records-pwa-v2';
+const CACHE_NAME = 'toilet-records-pwa-v3';
 const FILES_TO_CACHE = [
   'index.html',
   'styles.css',
   'app.js',
   'manifest.json',
+  'service-worker.js',
   'icons/icon.svg'
 ];
 
