@@ -7,7 +7,6 @@ const severityOptions = Array.from(document.querySelectorAll(".severity-option")
 const statusMessage = document.getElementById("statusMessage");
 const calendar = document.getElementById("calendar");
 const dayDetails = document.getElementById("dayDetails");
-const historyList = document.getElementById("historyList");
 let selectedDate = null;
 
 const PAIN_LEVELS = [
@@ -93,65 +92,12 @@ function buildCalendar(records) {
   }
 }
 
-function renderHistory(records) {
-  historyList.innerHTML = "";
-  const sorted = [...records].sort((a, b) => (a.timestamp < b.timestamp ? 1 : -1));
-
-  if (sorted.length === 0) {
-    const emptyItem = document.createElement("li");
-    emptyItem.textContent = "記録がまだありません。";
-    historyList.appendChild(emptyItem);
-    return;
-  }
-
-  sorted.slice(0, 10).forEach((item) => {
-    const li = document.createElement("li");
-
-    const left = document.createElement("div");
-    const dateSpan = document.createElement("div");
-    dateSpan.className = "history-date";
-    dateSpan.textContent = item.displayDate;
-
-    const timeSpan = document.createElement("div");
-    timeSpan.className = "history-time";
-    timeSpan.textContent = item.time;
-
-    left.append(dateSpan, timeSpan);
-
-    const symbolSpan = document.createElement("span");
-    symbolSpan.className = "history-symbol";
-    if (item.type === "pain") {
-      symbolSpan.textContent = `● ${item.levelLabel}`;
-      symbolSpan.style.color = item.color;
-    } else {
-      symbolSpan.textContent = "⚪ 排便";
-      symbolSpan.style.color = "#7d61ff";
-    }
-
-    const deleteButton = document.createElement("button");
-    deleteButton.className = "history-delete";
-    deleteButton.type = "button";
-    deleteButton.textContent = "削除";
-    deleteButton.addEventListener("click", () => {
-      if (window.confirm("この記録を削除しますか？")) {
-        deleteRecord(item.timestamp);
-      }
-    });
-
-    li.append(left, symbolSpan, deleteButton);
-    historyList.appendChild(li);
-  });
-}
-
 function updateStatus(records) {
-  const todayKey = getTodayKey();
-  const todayToiletCount = records.filter((item) => item.date === todayKey && (item.type || "toilet") === "toilet").length;
-  const todayPainCount = records.filter((item) => item.date === todayKey && item.type === "pain").length;
-
-  if (todayToiletCount > 0 || todayPainCount > 0) {
-    statusMessage.textContent = `本日の記録: 排便 ${todayToiletCount} 回、腹痛 ${todayPainCount} 件`;
+  const hasRecords = records.length > 0;
+  if (hasRecords) {
+    statusMessage.textContent = "記録を追加してください。";
   } else {
-    statusMessage.textContent = "今日の記録はまだありません。記録ボタンを押してください。";
+    statusMessage.textContent = "まだ記録がありません。";
   }
 }
 
@@ -176,18 +122,29 @@ function showDayDetails(records, dateKey) {
     return;
   }
 
-  dayDetails.innerHTML = `<strong>${formatDayLabel(dateKey)} の記録</strong>`;
+  dayDetails.innerHTML = `<strong>${formatDayLabel(dateKey)} の記録</strong><p class="detail-note">タップで削除できます。</p>`;
   const list = document.createElement("ul");
   list.className = "detail-list";
 
   selectedRecords.sort((a, b) => (a.timestamp < b.timestamp ? 1 : -1)).forEach((item) => {
     const itemLi = document.createElement("li");
+    itemLi.className = "detail-item";
+    itemLi.dataset.timestamp = item.timestamp;
+
     if (item.type === "pain") {
       itemLi.textContent = `${item.time} - 腹痛 (${item.levelLabel})`;
       itemLi.style.color = item.color;
     } else {
-      itemLi.textContent = `${item.time} - 排便`;
+      itemLi.textContent = `${item.time} - 🌱`;
     }
+
+    itemLi.addEventListener("click", () => {
+      if (window.confirm("この記録を削除しますか？")) {
+        deleteRecord(item.timestamp);
+        selectedDate = dateKey;
+      }
+    });
+
     list.appendChild(itemLi);
   });
 
@@ -246,7 +203,6 @@ function deleteRecord(timestamp) {
 function refreshUI() {
   const records = loadRecords();
   buildCalendar(records);
-  renderHistory(records);
   updateStatus(records);
   showDayDetails(records, selectedDate);
 }

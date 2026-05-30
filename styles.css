@@ -264,6 +264,25 @@ p {
   padding: 0;
 }
 
+.detail-note {
+  margin: 8px 0 0 0;
+  color: #6b5bd6;
+  font-size: 0.88rem;
+}
+
+.detail-item {
+  margin-bottom: 8px;
+  color: #3b2f74;
+  cursor: pointer;
+  padding: 8px 10px;
+  border-radius: 12px;
+  transition: background 0.15s ease;
+}
+
+.detail-item:hover {
+  background: rgba(125, 97, 255, 0.08);
+}
+
 .detail-list li {
   margin-bottom: 8px;
   color: #3b2f74;
