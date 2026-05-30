@@ -20,9 +20,25 @@
     </header>
 
     <section class="record-panel">
-      <button id="recordButton" class="record-button">🌱 記録</button>
+      <div class="record-actions">
+        <button id="recordButton" class="record-button">🌱 排便を記録</button>
+        <button id="painRecordButton" class="record-button pain-button">💥 腹痛を記録</button>
+      </div>
       <div id="statusMessage" class="status">まだ記録がありません。</div>
     </section>
+
+    <div id="painModal" class="modal-overlay hidden" aria-hidden="true">
+      <div class="modal-window">
+        <h3>腹痛の強さを選択</h3>
+        <div class="severity-grid">
+          <button class="severity-option severity-light" data-level="1">軽い</button>
+          <button class="severity-option severity-normal" data-level="2">普通</button>
+          <button class="severity-option severity-strong" data-level="3">強い</button>
+          <button class="severity-option severity-very-strong" data-level="4">非常に強い</button>
+        </div>
+        <button id="modalCancelButton" class="modal-cancel">キャンセル</button>
+      </div>
+    </div>
 
     <section class="calendar-panel">
       <h2>カレンダー</h2>

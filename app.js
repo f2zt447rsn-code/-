@@ -1,10 +1,21 @@
 const STORAGE_KEY = "toilet-records";
 const recordButton = document.getElementById("recordButton");
+const painRecordButton = document.getElementById("painRecordButton");
+const painModal = document.getElementById("painModal");
+const modalCancelButton = document.getElementById("modalCancelButton");
+const severityOptions = Array.from(document.querySelectorAll(".severity-option"));
 const statusMessage = document.getElementById("statusMessage");
 const calendar = document.getElementById("calendar");
 const dayDetails = document.getElementById("dayDetails");
 const historyList = document.getElementById("historyList");
 let selectedDate = null;
+
+const PAIN_LEVELS = [
+  { level: 1, label: "軽い", color: "#2ab7a9", symbol: "●" },
+  { level: 2, label: "普通", color: "#f2c94c", symbol: "●" },
+  { level: 3, label: "強い", color: "#f2994a", symbol: "●" },
+  { level: 4, label: "非常に強い", color: "#eb5757", symbol: "●" },
+];
 
 function loadRecords() {
   const stored = localStorage.getItem(STORAGE_KEY);
@@ -57,13 +68,26 @@ function buildCalendar(records) {
   for (let day = 1; day <= daysInMonth; day += 1) {
     const key = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
     const cell = document.createElement("div");
-    const isMarked = markedDates.has(key);
+    const dayRecords = records.filter((item) => item.date === key);
+    const hasAnyRecord = dayRecords.length > 0;
     const isToday = key === getTodayKey();
     const isSelected = key === selectedDate;
-    const classes = ["calendar-day", isMarked && "marked", isToday && "today", isSelected && "selected", "clickable"].filter(Boolean).join(" ");
+    const classes = ["calendar-day", hasAnyRecord && "marked", isToday && "today", isSelected && "selected", "clickable"].filter(Boolean).join(" ");
     cell.className = classes;
     cell.textContent = String(day);
     cell.dataset.date = key;
+
+    const strongestPain = dayRecords
+      .filter((item) => item.type === "pain")
+      .sort((a, b) => b.level - a.level)[0];
+
+    if (strongestPain) {
+      const dot = document.createElement("span");
+      dot.className = "severity-dot";
+      dot.style.background = strongestPain.color;
+      cell.appendChild(dot);
+    }
+
     cell.addEventListener("click", () => selectDay(key, records));
     calendar.appendChild(cell);
   }
@@ -96,7 +120,13 @@ function renderHistory(records) {
 
     const symbolSpan = document.createElement("span");
     symbolSpan.className = "history-symbol";
-    symbolSpan.textContent = item.symbol;
+    if (item.type === "pain") {
+      symbolSpan.textContent = `● ${item.levelLabel}`;
+      symbolSpan.style.color = item.color;
+    } else {
+      symbolSpan.textContent = "⚪ 排便";
+      symbolSpan.style.color = "#7d61ff";
+    }
 
     const deleteButton = document.createElement("button");
     deleteButton.className = "history-delete";
@@ -115,10 +145,11 @@ function renderHistory(records) {
 
 function updateStatus(records) {
   const todayKey = getTodayKey();
-  const todayCount = records.filter((item) => item.date === todayKey).length;
+  const todayToiletCount = records.filter((item) => item.date === todayKey && (item.type || "toilet") === "toilet").length;
+  const todayPainCount = records.filter((item) => item.date === todayKey && item.type === "pain").length;
 
-  if (todayCount > 0) {
-    statusMessage.textContent = `本日の記録: ${todayCount} 回`;
+  if (todayToiletCount > 0 || todayPainCount > 0) {
+    statusMessage.textContent = `本日の記録: 排便 ${todayToiletCount} 回、腹痛 ${todayPainCount} 件`;
   } else {
     statusMessage.textContent = "今日の記録はまだありません。記録ボタンを押してください。";
   }
@@ -151,7 +182,12 @@ function showDayDetails(records, dateKey) {
 
   selectedRecords.sort((a, b) => (a.timestamp < b.timestamp ? 1 : -1)).forEach((item) => {
     const itemLi = document.createElement("li");
-    itemLi.textContent = `${item.time} - ${item.symbol}`;
+    if (item.type === "pain") {
+      itemLi.textContent = `${item.time} - 腹痛 (${item.levelLabel})`;
+      itemLi.style.color = item.color;
+    } else {
+      itemLi.textContent = `${item.time} - 排便`;
+    }
     list.appendChild(itemLi);
   });
 
@@ -168,11 +204,32 @@ function recordToday() {
   const records = loadRecords();
   const now = new Date();
   const newRecord = {
+    type: "toilet",
     date: getTodayKey(),
     displayDate: formatDate(now),
     time: formatTime(now),
     timestamp: now.toISOString(),
     symbol: "⚪",
+  };
+  records.push(newRecord);
+  saveRecords(records);
+  return records;
+}
+
+function recordPain(level) {
+  const records = loadRecords();
+  const now = new Date();
+  const levelInfo = PAIN_LEVELS.find((item) => item.level === Number(level));
+  const newRecord = {
+    type: "pain",
+    date: getTodayKey(),
+    displayDate: formatDate(now),
+    time: formatTime(now),
+    timestamp: now.toISOString(),
+    level: levelInfo.level,
+    levelLabel: levelInfo.label,
+    color: levelInfo.color,
+    symbol: levelInfo.symbol,
   };
   records.push(newRecord);
   saveRecords(records);
@@ -196,9 +253,43 @@ function refreshUI() {
 
 recordButton.addEventListener("click", () => {
   recordToday();
-  statusMessage.textContent = "記録しました。";
+  statusMessage.textContent = "排便を記録しました。";
   refreshUI();
 });
+
+painRecordButton.addEventListener("click", () => {
+  openPainModal();
+});
+
+severityOptions.forEach((button) => {
+  button.addEventListener("click", () => {
+    const selectedLevel = button.dataset.level;
+    recordPain(selectedLevel);
+    statusMessage.textContent = "腹痛を記録しました。";
+    closePainModal();
+    refreshUI();
+  });
+});
+
+modalCancelButton.addEventListener("click", () => {
+  closePainModal();
+});
+
+painModal.addEventListener("click", (event) => {
+  if (event.target === painModal) {
+    closePainModal();
+  }
+});
+
+function openPainModal() {
+  painModal.classList.remove("hidden");
+  painModal.setAttribute("aria-hidden", "false");
+}
+
+function closePainModal() {
+  painModal.classList.add("hidden");
+  painModal.setAttribute("aria-hidden", "true");
+}
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {

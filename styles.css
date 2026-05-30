@@ -44,6 +44,12 @@ p {
   margin-bottom: 18px;
 }
 
+.record-actions {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
 .record-button {
   width: 100%;
   border: none;
@@ -54,6 +60,90 @@ p {
   padding: 16px;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pain-button {
+  background: #12b886;
+}
+
+.pain-button:hover,
+.pain-button:focus {
+  background: #0f9c72;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 10;
+  padding: 20px;
+}
+
+.modal-overlay.hidden {
+  display: none;
+}
+
+.modal-window {
+  width: min(500px, 100%);
+  background: #fff;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 26px 60px rgba(0, 0, 0, 0.18);
+}
+
+.modal-window h3 {
+  margin: 0 0 18px;
+  font-size: 1.2rem;
+}
+
+.severity-grid {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.severity-option {
+  width: 100%;
+  border: none;
+  border-radius: 16px;
+  padding: 14px 16px;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.severity-light {
+  background: #2ab7a9;
+}
+
+.severity-normal {
+  background: #f2c94c;
+  color: #2f2f2f;
+}
+
+.severity-strong {
+  background: #f2994a;
+}
+
+.severity-very-strong {
+  background: #eb5757;
+}
+
+.modal-cancel {
+  width: 100%;
+  border: none;
+  border-radius: 16px;
+  background: #f4f2ff;
+  color: #4f3e8c;
+  padding: 14px 16px;
+  cursor: pointer;
+}
+
+.modal-cancel:hover,
+.modal-cancel:focus {
+  background: #e8e3ff;
 }
 
 .record-button:hover,
@@ -76,13 +166,17 @@ p {
 
 .calendar-day {
   aspect-ratio: 1 / 1;
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
   border-radius: 16px;
   border: 1px solid #e3dcdf;
   background: #fcfbf9;
   font-size: 0.95rem;
   color: #444;
+  position: relative;
 }
 
 .calendar-day.clickable {
@@ -110,6 +204,14 @@ p {
 
 .calendar-day.today::after {
   display: none;
+}
+
+.severity-dot {
+  position: absolute;
+  bottom: 10px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
 }
 
 .history-list {
