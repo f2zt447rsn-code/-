@@ -44,6 +44,35 @@ p {
   margin-bottom: 18px;
 }
 
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.calendar-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.month-nav {
+  border: none;
+  border-radius: 12px;
+  background: #f4f2ff;
+  color: #4f3e8c;
+  width: 42px;
+  height: 42px;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.month-nav:hover,
+.month-nav:focus {
+  background: #e8e3ff;
+}
+
 .record-actions {
   display: grid;
   gap: 12px;
@@ -191,10 +220,10 @@ p {
   box-shadow: inset 0 0 0 2px #7d61ff;
 }
 
-.calendar-day.marked {
-  background: #f7d1a8;
+.calendar-day.toilet-marked {
+  background: #f3e8ff;
   color: #1f1b14;
-  border-color: #f3c195;
+  border-color: #d8c5ff;
 }
 
 .calendar-day.today {
@@ -208,10 +237,20 @@ p {
 
 .severity-dot {
   position: absolute;
-  bottom: 10px;
+  bottom: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.detail-dot {
+  display: inline-block;
   width: 10px;
   height: 10px;
+  margin-left: 6px;
   border-radius: 50%;
+  vertical-align: middle;
 }
 
 .history-list {

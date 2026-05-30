@@ -4,10 +4,16 @@ const painRecordButton = document.getElementById("painRecordButton");
 const painModal = document.getElementById("painModal");
 const modalCancelButton = document.getElementById("modalCancelButton");
 const severityOptions = Array.from(document.querySelectorAll(".severity-option"));
-const statusMessage = document.getElementById("statusMessage");
+const calendarTitle = document.getElementById("calendarTitle");
+const prevMonthButton = document.getElementById("prevMonth");
+const nextMonthButton = document.getElementById("nextMonth");
 const calendar = document.getElementById("calendar");
 const dayDetails = document.getElementById("dayDetails");
 let selectedDate = null;
+
+const today = new Date();
+let displayYear = today.getFullYear();
+let displayMonth = today.getMonth();
 
 const PAIN_LEVELS = [
   { level: 1, label: "軽い", color: "#2ab7a9", symbol: "●" },
@@ -50,13 +56,11 @@ function getTodayKey() {
 
 function buildCalendar(records) {
   calendar.innerHTML = "";
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth();
+  const year = displayYear;
+  const month = displayMonth;
   const firstDay = new Date(year, month, 1);
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const startWeekday = firstDay.getDay();
-  const markedDates = new Set(records.map((item) => item.date));
 
   for (let blank = 0; blank < startWeekday; blank += 1) {
     const emptyCell = document.createElement("div");
@@ -68,10 +72,16 @@ function buildCalendar(records) {
     const key = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
     const cell = document.createElement("div");
     const dayRecords = records.filter((item) => item.date === key);
-    const hasAnyRecord = dayRecords.length > 0;
+    const hasToiletRecord = dayRecords.some((item) => item.type === "toilet");
     const isToday = key === getTodayKey();
     const isSelected = key === selectedDate;
-    const classes = ["calendar-day", hasAnyRecord && "marked", isToday && "today", isSelected && "selected", "clickable"].filter(Boolean).join(" ");
+    const classes = [
+      "calendar-day",
+      hasToiletRecord && "toilet-marked",
+      isToday && "today",
+      isSelected && "selected",
+      "clickable",
+    ].filter(Boolean).join(" ");
     cell.className = classes;
     cell.textContent = String(day);
     cell.dataset.date = key;
@@ -93,12 +103,13 @@ function buildCalendar(records) {
 }
 
 function updateStatus(records) {
-  const hasRecords = records.length > 0;
-  if (hasRecords) {
-    statusMessage.textContent = "記録を追加してください。";
-  } else {
-    statusMessage.textContent = "まだ記録がありません。";
-  }
+  // No visible status text required in current UI.
+  return;
+}
+
+function updateCalendarTitle() {
+  const monthLabel = `${displayYear}年${displayMonth + 1}月`;
+  calendarTitle.textContent = monthLabel;
 }
 
 function formatDayLabel(dateKey) {
@@ -132,8 +143,7 @@ function showDayDetails(records, dateKey) {
     itemLi.dataset.timestamp = item.timestamp;
 
     if (item.type === "pain") {
-      itemLi.textContent = `${item.time} - 腹痛 (${item.levelLabel})`;
-      itemLi.style.color = item.color;
+      itemLi.innerHTML = `${item.time} - 腹痛 <span class="detail-dot" style="background: ${item.color};"></span>`;
     } else {
       itemLi.textContent = `${item.time} - 🌱`;
     }
@@ -196,20 +206,18 @@ function recordPain(level) {
 function deleteRecord(timestamp) {
   const records = loadRecords().filter((item) => item.timestamp !== timestamp);
   saveRecords(records);
-  statusMessage.textContent = "記録を削除しました。";
   refreshUI();
 }
 
 function refreshUI() {
   const records = loadRecords();
+  updateCalendarTitle();
   buildCalendar(records);
-  updateStatus(records);
   showDayDetails(records, selectedDate);
 }
 
 recordButton.addEventListener("click", () => {
   recordToday();
-  statusMessage.textContent = "排便を記録しました。";
   refreshUI();
 });
 
@@ -217,11 +225,28 @@ painRecordButton.addEventListener("click", () => {
   openPainModal();
 });
 
+prevMonthButton.addEventListener("click", () => {
+  displayMonth -= 1;
+  if (displayMonth < 0) {
+    displayMonth = 11;
+    displayYear -= 1;
+  }
+  refreshUI();
+});
+
+nextMonthButton.addEventListener("click", () => {
+  displayMonth += 1;
+  if (displayMonth > 11) {
+    displayMonth = 0;
+    displayYear += 1;
+  }
+  refreshUI();
+});
+
 severityOptions.forEach((button) => {
   button.addEventListener("click", () => {
     const selectedLevel = button.dataset.level;
     recordPain(selectedLevel);
-    statusMessage.textContent = "腹痛を記録しました。";
     closePainModal();
     refreshUI();
   });

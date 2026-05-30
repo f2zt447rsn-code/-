@@ -16,7 +16,6 @@
   <main class="app-shell">
     <header>
       <h1>記録</h1>
-      <p>タップでカンタン記録</p>
     </header>
 
     <section class="record-panel">
@@ -24,7 +23,6 @@
         <button id="recordButton" class="record-button">🌱 記録</button>
         <button id="painRecordButton" class="record-button pain-button">💥 記録</button>
       </div>
-      <div id="statusMessage" class="status">まだ記録がありません。</div>
     </section>
 
     <div id="painModal" class="modal-overlay hidden" aria-hidden="true">
@@ -41,7 +39,11 @@
     </div>
 
     <section class="calendar-panel">
-      <h2>カレンダー</h2>
+      <div class="calendar-header">
+        <button id="prevMonth" class="month-nav">‹</button>
+        <h2 id="calendarTitle"></h2>
+        <button id="nextMonth" class="month-nav">›</button>
+      </div>
       <div id="calendar" class="calendar"></div>
       <div id="dayDetails" class="day-details">日付をタップしてその日の記録を確認できます。</div>
     </section>
