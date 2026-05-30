@@ -72,7 +72,7 @@ function buildCalendar(records) {
     const key = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
     const cell = document.createElement("div");
     const dayRecords = records.filter((item) => item.date === key);
-    const hasToiletRecord = dayRecords.some((item) => item.type === "toilet");
+    const hasToiletRecord = dayRecords.some((item) => item.type === "toilet" || item.type === undefined);
     const isToday = key === getTodayKey();
     const isSelected = key === selectedDate;
     const classes = [
