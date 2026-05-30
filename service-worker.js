@@ -1,4 +1,4 @@
-const CACHE_NAME = 'toilet-records-pwa-v4';
+const CACHE_NAME = 'toilet-records-pwa-v6';
 const FILES_TO_CACHE = [
   'index.html',
   'styles.css',
@@ -59,7 +59,26 @@ self.addEventListener('fetch', (event) => {
   }
 
   const requestUrl = new URL(event.request.url);
-  const isAppShell = requestUrl.pathname === '/' || requestUrl.pathname.endsWith('/index.html') || requestUrl.pathname.endsWith('/app.js') || requestUrl.pathname.endsWith('/styles.css');
+  const isIndexHtml = requestUrl.pathname === '/' || requestUrl.pathname.endsWith('/index.html');
+
+  if (isIndexHtml) {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseClone);
+            });
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  const isAppShell = requestUrl.pathname.endsWith('/app.js') || requestUrl.pathname.endsWith('/styles.css');
 
   if (isAppShell) {
     event.respondWith(networkFirst(event.request));

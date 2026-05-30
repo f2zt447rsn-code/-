@@ -277,7 +277,8 @@ let refreshing = false;
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
     try {
-      const registration = await navigator.serviceWorker.register('service-worker.js');
+      const swUrl = `service-worker.js?v=${Date.now()}`;
+      const registration = await navigator.serviceWorker.register(swUrl);
       console.log('Service Worker registered:', registration.scope);
 
       if (registration.waiting) {
